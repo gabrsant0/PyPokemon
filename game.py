@@ -12,8 +12,8 @@ class Game():
         self.game_state = gameState.MAIN_MENU
 
         self.main_menu = Menu(screen)
-        self.map_1 = Map1(screen)
-        self.map_editor = Map_Editor(screen)
+        self.map_1 = Map1(screen, self)
+        self.map_editor = Map_Editor(screen, self)
         
 
     def render(self):
@@ -51,6 +51,5 @@ class Game():
                         self.load_map_editor()
         elif self.game_state == gameState.MAP_EDITOR:
             self.map_editor.handle_events()
-            
         elif self.game_state == gameState.MAP_1:
             self.map_1.handle_events()

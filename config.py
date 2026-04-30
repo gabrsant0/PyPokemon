@@ -1,6 +1,6 @@
 import config
 
-TILE_SIZE = 32
+TS = 32 #Tile Size
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)

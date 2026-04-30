@@ -2,17 +2,19 @@ import pygame
 import config
 import tile_manager
 from player import Player
+from game_state import gameState
 
 class Map1():
-    def __init__(self, screen):
+    def __init__(self, screen, game):
         self.screen = screen        
 
         self.tile_map = []
 
-        self.load()
-
-        self.cam_x = int((config.SCREEN_WIDTH / config.TILE_SIZE) / 2)
-        self.cam_y = int(((config.SCREEN_WIDTH / config.TILE_SIZE) / 2) - 4)
+        self.load() 
+        self.game = game
+         
+        self.cam_x = int((config.SCREEN_WIDTH / config.TS) / 2)
+        self.cam_y = int(((config.SCREEN_WIDTH / config.TS) / 2) - 4)
         self.player = Player(screen, self.cam_x, self.cam_y)
 
     def load(self):
@@ -41,11 +43,13 @@ class Map1():
     def render(self):
         self.screen.fill((0, 0, 0))
         
-        tile_size = 32
-        
         for y in range(len(self.tile_map_group) - 1):
-                for x in range(len(self.tile_map_group[y]) - 1):
-                    self.screen.blit(map_tile_set[self.tile_map_group[y][x]], ((config.TILE_SIZE * x) - (self.cam_x * config.TILE_SIZE), (config.TILE_SIZE * y) - (self.cam_y) * config.TILE_SIZE, config.TILE_SIZE, config.TILE_SIZE))
+            for x in range(len(self.tile_map_group[y]) - 1):
+                if self.tile_map_group[y][x] in map_tile_set:
+                    self.screen.blit(map_tile_set[self.tile_map_group[y][x]], 
+                ((config.TS * x) - (self.cam_x * config.TS), 
+                (config.TS * y) - (self.cam_y) * config.TS, 
+                config.TS, config.TS))
 
         self.player.render()
       
@@ -54,7 +58,9 @@ class Map1():
 
     def handle_events(self):
         for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.QUIT:
+                self.game.game_state = gameState.NONE
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:
                     self.player.player_mov(0, -1)
                     self.cam_y -= 1
@@ -69,9 +75,9 @@ class Map1():
                     self.cam_x -= 1
 
 map_tile_set = {
-    tile_manager.GRASS_TILE1: pygame.transform.scale(pygame.image.load("assets/tileset/grass1.png"), tile_manager.TILE_SIZE),
-    tile_manager.GRASS_TILE2: pygame.transform.scale(pygame.image.load("assets/tileset/grass2.jpg"), tile_manager.TILE_SIZE),
-    tile_manager.GRASS_TILE3: pygame.transform.scale(pygame.image.load("assets/tileset/grass3.jpg"), tile_manager.TILE_SIZE),
-    tile_manager.GRASS_TILE4: pygame.transform.scale(pygame.image.load("assets/tileset/grass4.jpg"), tile_manager.TILE_SIZE),
-    tile_manager.GRASS_TILE5: pygame.transform.scale(pygame.image.load("assets/tileset/grass5.jpg"), tile_manager.TILE_SIZE),
+    tile_manager.GRASS_TILE1: pygame.transform.scale(pygame.image.load("assets/tileset/grass1.png"), (config.TS, config.TS)),
+    tile_manager.GRASS_TILE2: pygame.transform.scale(pygame.image.load("assets/tileset/grass2.jpg"), (config.TS, config.TS)),
+    tile_manager.GRASS_TILE3: pygame.transform.scale(pygame.image.load("assets/tileset/grass3.jpg"), (config.TS, config.TS)),
+    tile_manager.GRASS_TILE4: pygame.transform.scale(pygame.image.load("assets/tileset/grass4.jpg"), (config.TS, config.TS)),
+    tile_manager.GRASS_TILE5: pygame.transform.scale(pygame.image.load("assets/tileset/grass5.jpg"), (config.TS, config.TS)),
 }
