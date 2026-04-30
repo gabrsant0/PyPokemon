@@ -1,0 +1,12 @@
+import config
+
+TILE_SIZE = 32
+
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+GREEN = (106, 229, 153)
+YELLOW = (237, 208, 33)
+RED = (251, 87, 60)
+
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
