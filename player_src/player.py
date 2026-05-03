@@ -1,6 +1,6 @@
 import pygame
 import config
-import sprites.player_sprite as sprite
+import player_src.player_sprite as sprite
 from utilities.timer import Timer
 
 class Player():

@@ -2,9 +2,9 @@ import pygame
 import config
 from game_state import gameState
 from game_state import State
-from menu import Menu
-from map_1 import Map1
-from map_editor import Map_Editor
+from scenes.menu import Menu
+from scenes.map_1 import Map1
+from player_src.player import Player
 
 class Game():
     def __init__(self, screen):
@@ -12,9 +12,7 @@ class Game():
         self.game_state = gameState.MAIN_MENU
 
         self.main_menu = Menu(screen)
-        self.map_1 = Map1(screen, self)
-        self.map_editor = Map_Editor(screen, self)
-        
+        self.map_1 = Map1(screen, self, Player)        
 
     def render(self):
         if self.game_state == gameState.MAP_1:
@@ -24,16 +22,6 @@ class Game():
         elif self.game_state == gameState.MAP_EDITOR:
             self.map_editor.render()
         self.handle_Events()
-
-    def load_map_editor(self):
-        map_file = input("Please write the directory of the map \n")
-        try:
-            with open(map_file) as map_f:
-                print('Map loaded')
-                self.map_editor.load(map_file)
-                self.game_state = gameState.MAP_EDITOR
-        except:
-            print("Error, this map directory does not exist.")
 
     def handle_Events(self):
         if self.game_state == gameState.MAIN_MENU:
@@ -47,9 +35,5 @@ class Game():
                         self.game_state = gameState.MAIN_MENU
                     if event.key == pygame.K_RETURN:
                         self.game_state = gameState.MAP_1
-                    if event.key == pygame.K_e:
-                        self.load_map_editor()
-        elif self.game_state == gameState.MAP_EDITOR:
-            self.map_editor.handle_events()
         elif self.game_state == gameState.MAP_1:
             self.map_1.handle_events()

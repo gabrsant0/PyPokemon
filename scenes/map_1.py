@@ -1,11 +1,10 @@
 import pygame
 import config
-import tile_manager
-from player import Player
+import map.tile_manager as tile_manager
 from game_state import gameState
 
 class Map1():
-    def __init__(self, screen, game):
+    def __init__(self, screen, game, Player):
         self.screen = screen        
         self.load() 
         self.game = game
@@ -31,7 +30,7 @@ class Map1():
 
         tile_map_count = 0
 
-        with open('grid/map1.txt') as map_file:
+        with open('map/map1.txt') as map_file:
             content = map_file.read()
             step = 2
             for tile in content:
