@@ -15,6 +15,7 @@ state = State.RUNNING
 
 while state is not State.NONE:
     game.render()
+    clock.tick(config.FPS)
     
     pygame.display.flip()
 

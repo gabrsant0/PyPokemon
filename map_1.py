@@ -7,15 +7,22 @@ from game_state import gameState
 class Map1():
     def __init__(self, screen, game):
         self.screen = screen        
-
-        self.tile_map = []
-
         self.load() 
         self.game = game
+        self.clock = pygame.time.Clock()
+
+
+        self.tile_map = []
          
-        self.cam_x = int((config.SCREEN_WIDTH / config.TS) / 2)
-        self.cam_y = int(((config.SCREEN_WIDTH / config.TS) / 2) - 4)
-        self.player = Player(screen, self.cam_x, self.cam_y)
+        self.center_x = int((config.SCREEN_HEIGHT / 32) / 2)
+        self.center_x = int((config.SCREEN_WIDTH / 32) / 2)
+        self.camera_speed = 5.3
+        self.camera_is_mov_x = False
+        self.camera_is_mov_y = False
+        self.cam_x = 0
+        self.cam_y = 0
+        
+        self.player = Player(screen, self.center_x, self.center_x)
 
     def load(self):
         self.tile_map_group = []
@@ -51,28 +58,49 @@ class Map1():
                 (config.TS * y) - (self.cam_y) * config.TS, 
                 config.TS, config.TS))
 
-        self.player.render()
-      
+        self.player.render(self.cam_x, self.cam_y)
+
+        self.dt = self.clock.tick(config.FPS) / 1000
+
+
+        self.set_camera()
+
+
     def set_camera(self):
-        pass
+        #print(eventkey)
+        #print('pos x', self.player.pos_x, 'pos y', self.player.pos_y, 'camx', self.cam_x, 'camy', self.cam_y)
+        
+        if self.player.pos_x - self.cam_x > 20:
+            self.cam_x += self.camera_speed * self.dt
+        elif self.player.pos_x - self.cam_x < 4:
+            self.cam_x -= self.camera_speed * self.dt
+
+        if self.player.pos_y - self.cam_y < 4:
+            self.cam_y -= self.camera_speed * self.dt
+        elif self.player.pos_y - self.cam_y > 13:
+            self.cam_y += self.camera_speed * self.dt
+
 
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.game.game_state = gameState.NONE
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_w:
-                    self.player.player_mov(0, -1)
-                    self.cam_y -= 1
-                elif event.key == pygame.K_s:
-                    self.player.player_mov(0, 1)
-                    self.cam_y += 1
-                elif event.key == pygame.K_d:
-                    self.player.player_mov(1, 0)
-                    self.cam_x += 1
-                elif event.key == pygame.K_a:
-                    self.player.player_mov(-1, 0)
-                    self.cam_x -= 1
+
+        #player mov
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_w]:
+            self.player.player_mov(0, (self.player.speed - (self.player.speed * 2)) * self.dt, 'top')
+            self.set_camera()
+        elif keys[pygame.K_s]:
+            self.player.player_mov(0, self.player.speed * self.dt, 'bottom')
+            self.set_camera()
+        elif keys[pygame.K_d]:
+            self.player.player_mov(self.player.speed * self.dt, 0, 'right')
+            self.set_camera()
+        elif keys[pygame.K_a]:
+            self.player.player_mov((self.player.speed - (self.player.speed * 2)) * self.dt, 0, 'left')
+            self.set_camera()
+
 
 map_tile_set = {
     tile_manager.GRASS_TILE1: pygame.transform.scale(pygame.image.load("assets/tileset/grass1.png"), (config.TS, config.TS)),

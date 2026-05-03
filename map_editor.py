@@ -36,6 +36,38 @@ class Map_Editor():
                     else:
                         step += 1
             return True
+    
+    def bucket_paint(self, x, y):   
+        temp_tile = self.tile_map[x][y]
+        self.tile_map[x][y] = '9'
+
+        for z in range(len(self.tile_map)):
+            for y in range(len(self.tile_map)):
+                for x in range(len(self.tile_map[y])):
+                    if self.tile_map[y][x] == temp_tile:
+                        print("tryng", y, x)
+                        if y < len(self.tile_map) - 1:
+                            if self.tile_map[y + 1][x] == '9':
+                                self.tile_map[y][x] = '9'
+                        if y > 1:
+                            if self.tile_map[y - 1][x] == '9':
+                                self.tile_map[y][x] = '9'  
+                        if x > 1:
+                            if self.tile_map[y][x - 1] == '9':
+                                self.tile_map[y][x] = '9'
+                        if x < 8:
+                            if self.tile_map[y][x + 1] == '9':
+                                self.tile_map[y][x] = '9'
+    
+
+        for y in range(len(self.tile_map)):
+            for x in range(len(self.tile_map[y])):
+                if self.tile_map[y][x] == '9':
+                    self.tile_map[y][x] = self.selected_sprite
+        self.write_map()
+            
+        #for bucket painting [2][5], check [1][5]
+
 
 
     def load(self, map_to_load):
@@ -171,6 +203,8 @@ class Map_Editor():
                     if self.cam_x - 1 < 0:
                         return
                     self.cam_x -= 1
+                elif event.key == pygame.K_b:
+                    self.bucket_paint(self.cy, self.cx)
 
 
                 #place sprite
