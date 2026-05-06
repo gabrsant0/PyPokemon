@@ -67,8 +67,6 @@ class Map_Editor():
             
         #for bucket painting [2][5], check [1][5]
 
-
-
     def load(self, map_to_load):
         self.map = map_to_load
         with open(self.map, 'r') as map_file:
@@ -93,10 +91,7 @@ class Map_Editor():
                             step += 1
         self.write_map()
 
-    def rndm(self):
-        pass
-
-    def update_map_x(self):
+    def update_map(self):
         for y in range(len(self.tile_map)):
             if len(self.tile_map[y]) < self.x_line + self.cam_x:
                 self.tile_map[y][len(self.tile_map[y]) - 1] = 'N'
@@ -112,21 +107,6 @@ class Map_Editor():
                     self.tile_map[y].append('N')
 
         self.write_map()
-
-    def update_map(self): 
-        with open(self.map, 'r') as map_file:
-            for y in range(self.y_line + self.cam_y): #range(self.cam_y, self.y_line + self.cam_y, 1
-                lines = map_file.readline()
-                if len(lines) < self.x_line:
-                    new_tile_x = []
-                    self.tile_map.append(new_tile_x)
-                    for x in range(self.x_line + 1):
-                        if self.x_line + 1 == x + 1:
-                            self.tile_map[y].append('E')
-                            continue
-                        self.tile_map[y].append('N')
-        self.write_map()
-
 
     def write_map(self):
         with open(self.map, 'w') as map_file: #write the tilme map array into the txt file
@@ -146,11 +126,11 @@ class Map_Editor():
         #draw tiles
         for y in range(len(self.tile_map)):
             for x in range(len(self.tile_map[y])):
+                rect = pygame.Rect((x * config.TS) - self.cam_rect[0], (y * config.TS) - self.cam_rect[1], config.TS, config.TS)
                 if self.tile_map[y][x] in map_tile_set:
-                    self.screen.blit(map_tile_set[self.tile_map[y][x]], ((x * config.TS) - self.cam_rect[0], (y * config.TS) - self.cam_rect[1]))
+                    self.screen.blit(map_tile_set[self.tile_map[y][x]], rect)
                 elif self.debug_sprite == True:
-                    pygame.draw.rect(self.screen, (255, 255, 255), ((x * config.TS) - self.cam_rect[0], (y * config.TS) - self.cam_rect[1], 
-                    config.TS, config.TS), 1)
+                    pygame.draw.rect(self.screen, (255, 255, 255), rect, 1)
 
         #main control
         self.screen.blit(map_tile_set[self.selected_sprite], ((self.cx * config.TS) - self.cam_rect[0], (self.cy * config.TS) - self.cam_rect[1]))
@@ -191,10 +171,10 @@ class Map_Editor():
                     if self.cy - self.cam_y - 1 < 0:
                         return
                     self.cam_y += 1
-                    self.update_map_x()
+                    self.update_map()
                 elif event.key == pygame.K_RIGHT:
                     self.cam_x += 1
-                    self.update_map_x()
+                    self.update_map()
                 elif event.key == pygame.K_LEFT:
                     if self.cam_x - 1 < 0:
                         return

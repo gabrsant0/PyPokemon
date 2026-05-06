@@ -2,6 +2,7 @@ import pygame
 import config
 import player_src.player_sprite as sprite
 from utilities.timer import Timer
+from utilities.collision import Rigidbody
 
 class Player():
     def __init__(self, screen, x, y):
@@ -20,19 +21,23 @@ class Player():
         self.sprite.convert_alpha()
         self.update_animation()
         
-
         self.speed = 15.3
         self.pos_x = x
         self.pos_y = y
+        self.w = 32
+        self.h = 54
+        self.rect = pygame.Rect(self.pos_x * 32, self.pos_y * 32, self.w, self.h)
         self.screen = screen
 
+        self.rigidbody = Rigidbody(self, self.rect)
         self.timer = Timer()
 
     def render(self, cam_x, cam_y):
-        self.screen.blit(self.sprite, ((self.pos_x * config.TS) - (cam_x * config.TS), (self.pos_y * config.TS) - (cam_y * config.TS), 
-        config.TS, config.TS))
+        self.rect = pygame.Rect((self.pos_x * 32) - (cam_x * config.TS), (self.pos_y * 32) - (cam_y * config.TS), self.w, self.h)
+        self.screen.blit(self.sprite, self.rect)
         
         self.timer.update()
+        self.rigidbody.update(self.rect)
 
     def update_animation(self):
         if self.current_anim >= 2:
@@ -50,7 +55,10 @@ class Player():
     def walking_anim(self):
         self.walking = False
 
-    def player_mov(self, x, y, set_direction):
+    def player_mov(self, x, y, dt, set_direction):
+        x = (x * self.speed)* dt
+        y = (y * self.speed)* dt
+
         if self.walking == False:
             self.walking = True 
 
